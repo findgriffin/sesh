@@ -1,3 +1,5 @@
+use std::env;
+
 use rusqlite::{Connection, Result};
 
 #[derive(Debug)]
@@ -12,9 +14,10 @@ struct Record {
 fn main() -> Result<()> {
     let conn = Connection::open_in_memory()?;
     conn.execute("CREATE TABLE log (id INTEGER PRIMARY KEY, output TEXT, input TEXT NOT NULL)", ())?;
+    let args: Vec<String> = env::args().collect();
     let one = Record {
         id: 0,
-        input: "ls".to_string(),
+        input: args.join(" "),
         output: Some("hello.txt".to_string()),
     };
     conn.execute("INSERT INTO log (input, output) VALUES (?1, ?2)",
